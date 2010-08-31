@@ -3,7 +3,7 @@
 	clojure.contrib.zip-filter.xml
 	[clojure.contrib.str-utils :only (str-join)])
   (:require [clojure.zip :as zip]
-	    [clojure.http.resourcefully :as resourcefully])
+	    [clojure-http.resourcefully :as resourcefully])
   (:import java.net.URLEncoder)
   (:gen-class :main false))
 
