@@ -1,0 +1,97 @@
+<project name="lastpoetry" basedir="." default="compile">
+
+  <property file="build.properties" />
+  <property name="classes.dir" value="war/WEB-INF/classes" />
+  <property name="lib.dir" value="war/WEB-INF/lib" />
+  <property name="src.dir" value="src" />
+  <property name="test.dir" value="test" />
+  <property name="clojure.dir" value="${clojure-lib.dir}/clojure" />
+  <property name="clojure-contrib.dir" value="${clojure-lib.dir}/clojure-contrib" />
+  <property name="clojure-http-client.dir" value="${clojure-lib.dir}/clojure-http-client" />
+  <property name="compojure.dir" value="${clojure-lib.dir}/compojure" />
+
+  <import file="${sdk.dir}/config/user/ant-macros.xml"/>
+
+  <path id="project.classpath">
+    <pathelement path="${classes.dir}" />
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${sdk.dir}/lib">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+
+  <target name="clean">
+    <delete dir="${classes.dir}" />
+  </target>
+  
+  <target name="init">
+    <mkdir dir="${classes.dir}" />
+  </target>  
+
+  <target name="copyjars">
+    <copy todir="${lib.dir}" flatten="yes">
+      <resources>
+	<file file="${sdk.dir}/lib/user/appengine-api-1.0-sdk-1.2.1.jar" />
+	<file file="${clojure.dir}/clojure.jar" />
+	<file file="${clojure-contrib.dir}/clojure-contrib.jar" />
+	<file file="${clojure-http-client.dir}/clojure-http-client.jar" />
+	<file file="${compojure.dir}/compojure.jar" />
+	<file file="${compojure.dir}/deps/commons-fileupload-1.2.1.jar" />
+	<file file="${compojure.dir}/deps/commons-io-1.4.jar" />
+	<file file="${compojure.dir}/deps/commons-codec-1.3.jar" />
+	<file file="${compojure.dir}/deps/grizzly-http-servlet-1.9.10.jar" />
+	<file file="${compojure.dir}/deps/grizzly-http-webserver-1.9.10.jar" />
+	<file file="${compojure.dir}/deps/jetty-6.1.15.jar" />
+	<file file="${compojure.dir}/deps/jetty-util-6.1.15.jar" />
+	<file file="${compojure.dir}/deps/servlet-api-2.5-20081211.jar" />
+      </resources>
+    </copy>
+  </target>
+  
+  <target name="compile" depends="clean,init,copyjars">
+    <java classname="clojure.lang.Compile" classpathref="project.classpath" failonerror="true">
+      <classpath path="${src.dir}" />
+      <sysproperty key="clojure.compile.path" value="${classes.dir}" />
+      <arg value="com.iheardata.lastpoem.poetry" />
+      <arg value="com.iheardata.lastpoem.servlet" />
+    </java>
+  </target>
+
+  <target name="runserver" depends="compile"
+	  description="Starts the development server.">
+    <dev_appserver war="war" />
+  </target>
+
+
+  <target name="swank" description="run a swank server" depends="init">
+    <path id="swank.classpath">
+      <path refid="project.classpath" />
+      <pathelement path="${swank-clojure.dir}" />
+    </path>
+    <echo message="java -classpath ${toString:swank.classpath} clojure.main -e &#x22;(require 'swank.swank)&#x22; -e &#x22;(swank.swank/start-server \&#x22;/dev/null\&#x22; :port 4005)&#x22;"/>
+
+<!--
+    <exec dir="${src.dir}" executable="java" spawn="true">
+      <arg value="-classpath"/>
+      <arg value="${toString:swank.classpath}"/>
+      <arg value="clojure.main" />
+      <arg value="-e" />
+      <arg value="&#x22;(require 'swank.swank)&#x22;" />
+      <arg value="-e" />
+      <arg value="&#x22;(swank.swank/start-server \&#x22;/dev/null\&#x22; :port 4005)&#x22;" />
+    </exec>
+
+    <java classname="clojure.main" dir="${src.dir}"
+	  classpathref="project.classpath" >
+      <classpath path="${swank-clojure.dir}" />
+      <arg value="-e" />
+      <arg value="&#x22;(require 'swank.swank)&#x22;" />
+      <arg value="-e" />
+      <arg value="&#x22;(swank.swank/start-server \&#x22;/dev/null\&#x22; :port 4005)&#x22;" />
+    </java>
+-->
+  </target>
+
+</project>
