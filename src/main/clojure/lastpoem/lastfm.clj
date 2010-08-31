@@ -1,4 +1,4 @@
-(ns com.iheardata.lastpoem.poetry
+(ns lastpoem.lastfm
   (:use clojure.xml
 	clojure.contrib.zip-filter.xml
 	[clojure.contrib.str-utils :only (str-join)])
@@ -17,7 +17,6 @@
 (def lastfm-base-url "http://ws.audioscrobbler.com/2.0/")
 (def lastfm-api-key "fc2467833ca37805a9e5e7f0664b61fc")
 
-(def lyricwiki-base-url "http://lyricwiki.org/api.php")
 (def initial-number-of-tracks 15)
 (defn recent-tracks [username]
   (let [tracks (zip/xml-zip (parse (rest-url lastfm-base-url {"method" "user.getrecenttracks"
@@ -26,12 +25,6 @@
 							      "api_key" lastfm-api-key})))]
     (zipmap (xml-> tracks :recenttracks :track :artist text)
 	    (xml-> tracks :recenttracks :track :name text))))
-
-(defn fetch-lyrics [artist song]
-  (remove #(= "" %) ((resourcefully/get (rest-url lyricwiki-base-url {"func" "getSong",
-								      "artist" artist,
-								      "song" song,
-								      "fmt" "text"})) :body-seq)))
 
 (defn make-poetry [username]
   (let [lyriclist (remove #(= '("Not found") %)
