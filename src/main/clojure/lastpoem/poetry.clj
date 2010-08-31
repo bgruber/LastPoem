@@ -1,7 +1,9 @@
-(ns lastpoem.poetry)
+(ns lastpoem.poetry
+  [:use lastpoem.lyrics
+   lastpoem.lastfm])
 
 (defn make-poetry [username]
-  (let [lyriclist (remove #(= '("Not found") %)
+  (let [lyriclist (remove nil?
 						  (map #(apply fetch-lyrics %) (recent-tracks username)))
 		successful (count lyriclist)
 		nth-or-not (fn [n available]

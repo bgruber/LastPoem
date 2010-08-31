@@ -1,18 +1,9 @@
 (ns lastpoem.lastfm
   (:use clojure.xml
-	clojure.contrib.zip-filter.xml
-	[clojure.contrib.str-utils :only (str-join)])
+	clojure.contrib.zip-filter.xml)
   (:require [clojure.zip :as zip]
 	    [clojure-http.resourcefully :as resourcefully])
-  (:import java.net.URLEncoder)
   (:gen-class :main false))
-
-(defn rest-url [baseUrl params]
-  (str baseUrl
-       "?"
-       (str-join "&" (map #(str %1 "=" (URLEncoder/encode (str %2) "UTF-8"))
-			  (keys params)
-			  (vals params)))))
 
 (def lastfm-base-url "http://ws.audioscrobbler.com/2.0/")
 (def lastfm-api-key "fc2467833ca37805a9e5e7f0664b61fc")
