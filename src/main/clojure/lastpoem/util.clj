@@ -8,3 +8,12 @@
        (string/join "&" (map #(str %1 "=" (URLEncoder/encode (str %2) "UTF-8"))
 			  (keys params)
 			  (vals params)))))
+
+(defn fetch-url
+  "Get an InputStream representing the url."
+  [url]
+  (.openStream (.toURL (java.net.URI. url))))
+
+(defn fetch-urls [urls cont]
+  (cont (doall (map deref (map #(future (fetch-url %))
+                               urls)))))
