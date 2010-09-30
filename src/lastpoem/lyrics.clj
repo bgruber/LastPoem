@@ -8,19 +8,19 @@
   "Returns the URI to the page on lyrics wiki that contains the lyrics for a song, or nil if not found."
   [artist song]
   (let [find-first (fn [pred seq] (first (filter pred seq)))
-		get-tag (fn [doc tag] (->> doc
-								   :content
-								   (find-first #(= (:tag %) tag))
-								   :content
-								   first))
+        get-tag (fn [doc tag] (->> doc
+                                   :content
+                                   (find-first #(= (:tag %) tag))
+                                   :content
+                                   first))
         result-stream (fetch-url (rest-url lyricswiki-api-base-uri
                                            {"artist" artist
                                             "song" song
                                             "fmt" "xml"}))
-		result (clojure.xml/parse result-stream)
-		snippet (get-tag result :lyrics)]
+        result (clojure.xml/parse result-stream)
+        snippet (get-tag result :lyrics)]
     (if (= snippet "Not found") nil
-		(get-tag result :url))))
+        (get-tag result :url))))
 
 (defn extract-lyrics
   "Extracts the actual lyrics from a lyrics wiki page."
@@ -29,7 +29,7 @@
 
 (defn fetch-lyrics [artist song]
   (let [url (lyricswiki-query artist song)]
-	(if-not (nil? url)
+    (if-not (nil? url)
       (extract-lyrics (html/html-resource (fetch-url url))))))
 
 #_
