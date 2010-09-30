@@ -2,7 +2,6 @@
   (:require [lastpoem.util :as util]
 			[clojure.xml :as xml]
 			[clojure.zip :as zip]
-			[clojure-http.resourcefully :as resourcefully]
 			[clojure.contrib.zip-filter.xml :as zip-xml])
   (:gen-class :main false))
 
