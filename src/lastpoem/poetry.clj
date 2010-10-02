@@ -4,7 +4,7 @@
 
 (defn make-poetry [username]
   (let [lyriclist (remove nil?
-                          (map #(apply fetch-lyrics %) (recent-tracks username)))
+                          (fetch-lyricss (recent-tracks username)))
         successful (count lyriclist)
         nth-or-not (fn [n available]
                      (if (= n (dec successful))

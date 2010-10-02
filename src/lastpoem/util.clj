@@ -1,5 +1,6 @@
 (ns lastpoem.util
-  (:require [clojure.string :as string])
+  (:require [appengine-magic.services.urlfetch :as urlfetch]
+            [clojure.string :as string])
   (:import java.net.URLEncoder))
 
 (defn rest-url [baseUrl params]
@@ -9,11 +10,12 @@
 			  (keys params)
 			  (vals params)))))
 
+(defn fetch-result-to-stream
+  [^com.google.appengine.api.urlfetch.HTTPResponse r]
+  (java.io.ByteArrayInputStream. (:content r)))
+
+
 (defn fetch-url
   "Get an InputStream representing the url."
   [url]
-  (.openStream (.toURL (java.net.URI. url))))
-
-(defn fetch-urls [urls cont]
-  (cont (doall (map deref (map #(future (fetch-url %))
-                               urls)))))
+  (fetch-result-to-stream (urlfetch/fetch url)))

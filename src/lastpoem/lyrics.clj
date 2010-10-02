@@ -1,10 +1,11 @@
 (ns lastpoem.lyrics
   (:use lastpoem.util)
-  (:require [net.cgrand.enlive-html :as html]))
+  (:require [appengine-magic.services.urlfetch :as urlfetch]
+            [net.cgrand.enlive-html :as html]))
 
 (def lyricswiki-api-base-uri "http://lyricwiki.org/api.php")
 
-(defn lyricswiki-query
+(defn query
   "Returns the URI to the page on lyrics wiki that contains the lyrics for a song, or nil if not found."
   [artist song]
   (let [find-first (fn [pred seq] (first (filter pred seq)))
@@ -22,13 +23,47 @@
     (if (= snippet "Not found") nil
         (get-tag result :url))))
 
+(defn query-async [artist song]
+  (urlfetch/fetch-async (rest-url lyricswiki-api-base-uri
+                                  {"artist" artist
+                                   "song" song
+                                   "fmt" "xml"})))
+
+(defn parse-query-result [result-stream]
+  (let [find-first (fn [pred seq] (first (filter pred seq)))
+        get-tag (fn [doc tag] (->> doc
+                                   :content
+                                   (find-first #(= (:tag %) tag))
+                                   :content
+                                   first))
+        result (clojure.xml/parse result-stream)
+        snippet (get-tag result :lyrics)]
+    (if (= snippet "Not found")
+      nil
+      (get-tag result :url))))
+
 (defn extract-lyrics
   "Extracts the actual lyrics from a lyrics wiki page."
   [doc]
   (filter string? (:content (first (html/select doc [:div.lyricbox])))))
 
+(defn fetch-lyricss [songs]
+  (let [query-results (doall (map #(apply query-async %) songs))
+        urls (map #(parse-query-result
+                    (fetch-result-to-stream @%))
+                  query-results)
+        lyrics-results (doall (map #(if (nil? %) nil
+                                        (urlfetch/fetch-async %))
+                                   urls))]
+    (map #(if (nil? %) nil
+              (-> @%
+                  fetch-result-to-stream
+                  html/html-resource
+                  extract-lyrics))
+         lyrics-results)))
+
 (defn fetch-lyrics [artist song]
-  (let [url (lyricswiki-query artist song)]
+  (let [url (query artist song)]
     (if-not (nil? url)
       (extract-lyrics (html/html-resource (fetch-url url))))))
 

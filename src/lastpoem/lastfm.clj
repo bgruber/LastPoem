@@ -17,5 +17,6 @@
                                  "user" username
                                  "limit" initial-number-of-tracks
                                  "api_key" lastfm-api-key})))]
+    ;; TODO: make sure these come out in the right order at the end
     (zipmap (zip-xml/xml-> tracks :recenttracks :track :artist zip-xml/text)
             (zip-xml/xml-> tracks :recenttracks :track :name zip-xml/text))))
