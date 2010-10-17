@@ -8,6 +8,9 @@
 (def lastfm-base-url "http://ws.audioscrobbler.com/2.0/")
 (def lastfm-api-key "fc2467833ca37805a9e5e7f0664b61fc")
 
+(defn- ziplist [keys vals]
+  (map #(list %1 %2) keys vals))
+
 (def initial-number-of-tracks 15)
 (defn recent-tracks [username]
   (let [tracks (zip/xml-zip
@@ -17,6 +20,5 @@
                                  "user" username
                                  "limit" initial-number-of-tracks
                                  "api_key" lastfm-api-key})))]
-    ;; TODO: make sure these come out in the right order at the end
-    (zipmap (zip-xml/xml-> tracks :recenttracks :track :artist zip-xml/text)
-            (zip-xml/xml-> tracks :recenttracks :track :name zip-xml/text))))
+    (ziplist (zip-xml/xml-> tracks :recenttracks :track :artist zip-xml/text)
+             (zip-xml/xml-> tracks :recenttracks :track :name zip-xml/text))))
