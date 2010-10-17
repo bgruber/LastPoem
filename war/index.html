@@ -62,21 +62,21 @@ function updatePoem(element) {
     element.appear({duration: 0.0, queue: 'end'});
 }
 
-      function getPoem() {
-	  updatePoem(new Element('div').update("Loading..."));
-	  new Ajax.Request("/poetry", {
-	      parameters: {user: $F('lastfmUsername')},
-	      method: 'get',
-	      onSuccess: function(response) {
-		  var poemDiv = new Element('div').update(response.responseText);
-		  updatePoem(poemDiv);
-	      }
-	  });
+    function getPoem() {
+        updatePoem(new Element('div').update("Loading..."));
+        new Ajax.Request("/poetry", {
+            parameters: {user: $F('lastfmUsername')},
+            method: 'get',
+            onSuccess: function(response) {
+                var poemDiv = new Element('div').update(response.responseText);
+                updatePoem(poemDiv);
+            }
+        });
 //          new Ajax.Updater('poemArea', "/poetry", {
 //              parameters: {user: $F('lastfmUsername')},
 //              method: 'get'
 //          });
-      }
+    }
     </script>
   </head>
   <body>

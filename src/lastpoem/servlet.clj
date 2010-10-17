@@ -1,8 +1,8 @@
 (ns com.iheardata.lastpoem.servlet
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use compojure.http
-	compojure.html
-	[com.iheardata.lastpoem.poetry :only (make-poetry)]))
+        compojure.html
+        [com.iheardata.lastpoem.poetry :only (make-poetry)]))
 
 (defn poetry-output [params]
   (map #(html % [:br]) (make-poetry (params :user))))
@@ -12,10 +12,10 @@
        (poetry-output params))
   (GET "/"
        (html
-	[:html
-	 [:head
-	  [:title "Hello world"]]
-	 [:body
-	  [:div "hello world!"]]])))
+        [:html
+         [:head
+          [:title "Hello world"]]
+         [:body
+          [:div "hello world!"]]])))
 
 (defservice poetry)
