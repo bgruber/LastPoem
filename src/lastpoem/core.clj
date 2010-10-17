@@ -12,8 +12,8 @@
    :body (json/json-str data)})
 
 (defroutes lastpoem-app-handler
-  (GET "/poetry" []
-       (json-response (lastpoem.poetry/make-poetry "bgruber")))
+  (GET "/poetry" {{:strs [user]} :params}
+       (json-response (lastpoem.poetry/make-poetry user)))
   (route/not-found "404"))
 
 (ae/def-appengine-app lastpoem-app #'lastpoem-app-handler)
