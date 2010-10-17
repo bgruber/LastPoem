@@ -1,15 +1,19 @@
 (ns lastpoem.core
   (:use [compojure.core])
   (:require [appengine-magic.core :as ae]
-            [clojure.pprint]
+            [clojure.contrib.json :as json]
             [compojure.route :as route]
             [lastpoem.poetry]))
 
-(def pprint #(clojure.pprint/write % :stream nil))
+
+(defn json-response [data & [status]]
+  {:status (or status 200)
+   :headers {"Content-Type" "application/json"}
+   :body (json/json-str data)})
 
 (defroutes lastpoem-app-handler
   (GET "/poetry" []
-       (pprint (lastpoem.poetry/make-poetry "bgruber")))
+       (json-response (lastpoem.poetry/make-poetry "bgruber")))
   (route/not-found "404"))
 
 (ae/def-appengine-app lastpoem-app #'lastpoem-app-handler)
