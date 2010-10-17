@@ -5,5 +5,5 @@
                  [org.clojure/clojure-contrib "1.2.0"]
                  [compojure "0.5.1"]
                  [enlive "1.0.0-SNAPSHOT"]]
-  :dev-dependencies [[appengine-magic "0.1.3"]
+  :dev-dependencies [[appengine-magic "0.2.1-SNAPSHOT"]
                      [swank-clojure "1.2.1"]])
